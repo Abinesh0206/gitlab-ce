@@ -2,7 +2,7 @@ global:
   edition: ce
 
   hosts:
-    domain: gitlab.example.com   # ✅ Change this to your actual domain
+    domain: gitlab.example.com   # 🔁 change to your domain
     externalIP: ""               # optional
 
   ingress:
@@ -20,11 +20,11 @@ global:
       key: "password"
 
     ssl:
-      enabled: false
-      secret: "gitlab-ssl-dummy"       # ✅ dummy secret
-      serverCA: "dummy-ca.pem"         # ✅ dummy CA file
-      clientKey: "dummy-client.key"    # ✅ dummy client key
-      clientCert: "dummy-client.crt"   # ✅ dummy client cert
+      enabled: false                         # 🔴 SSL disabled
+      secret: "gitlab-ssl-dummy"             # 🔑 dummy secret (must exist)
+      serverCA: "dummy-server-ca.pem"        # 🔑 dummy file
+      clientKey: "dummy-client.key"          # 🔑 dummy file
+      clientCertificate: "dummy-client.crt"  # ✅ THIS LINE is what was missing
 
 certmanager:
   install: false
