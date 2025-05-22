@@ -2,8 +2,8 @@ global:
   edition: ce
 
   hosts:
-    domain: gitlab.example.com   # 🔁 Replace with your domain
-    externalIP: ""               # optional
+    domain: gitlab.example.com   # Replace this
+    externalIP: ""
 
   ingress:
     configureCertmanager: false
@@ -18,16 +18,15 @@ global:
     password:
       secret: "gitlab-postgres-secret"
       key: "password"
-
     ssl:
-      enabled: false                         # SSL disabled
+      enabled: false
       secret: "gitlab-ssl-dummy"
       serverCA: "dummy-server-ca.pem"
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
 
   minio:
-    enabled: false                           # ✅ moved under `global`
+    enabled: false
 
 certmanager:
   install: false
@@ -43,3 +42,13 @@ redis:
 
 gitlab-runner:
   install: false
+
+gitlab:
+  rails:
+    objectStore:
+      enabled: false
+
+toolbox:
+  backups:
+    objectStorage:
+      enabled: false
