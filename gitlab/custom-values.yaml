@@ -2,7 +2,7 @@ global:
   edition: ce
 
   hosts:
-    domain: gitlab.example.com   # Change to your domain
+    domain: gitlab.example.com   # ✅ Change this to your actual domain
     externalIP: ""               # optional
 
   ingress:
@@ -18,9 +18,14 @@ global:
     password:
       secret: "gitlab-postgres-secret"
       key: "password"
+
     ssl:
-      enabled: false  # Or true if RDS enforces SSL
-      secret: "gitlab-ssl-dummy"
+      enabled: false
+      secret: "gitlab-ssl-dummy"       # ✅ dummy secret
+      serverCA: "dummy-ca.pem"         # ✅ dummy CA file
+      clientKey: "dummy-client.key"    # ✅ dummy client key
+      clientCert: "dummy-client.crt"   # ✅ dummy client cert
+
 certmanager:
   install: false
 
