@@ -20,7 +20,7 @@ global:
       key: "password"
     ssl:
       enabled: false  # Or true if RDS enforces SSL
-      secret: ""
+      secret: "gitlab-ssl-dummy"
 certmanager:
   install: false
 
