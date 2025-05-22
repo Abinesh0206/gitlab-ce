@@ -2,7 +2,7 @@ global:
   edition: ce
 
   hosts:
-    domain: gitlab.example.com   # 🔁 change to your domain
+    domain: gitlab.example.com   # 🔁 Replace with your domain
     externalIP: ""               # optional
 
   ingress:
@@ -20,11 +20,14 @@ global:
       key: "password"
 
     ssl:
-      enabled: false                         # 🔴 SSL disabled
-      secret: "gitlab-ssl-dummy"             # 🔑 dummy secret (must exist)
-      serverCA: "dummy-server-ca.pem"        # 🔑 dummy file
-      clientKey: "dummy-client.key"          # 🔑 dummy file
-      clientCertificate: "dummy-client.crt"  # ✅ THIS LINE is what was missing
+      enabled: false                         # SSL disabled
+      secret: "gitlab-ssl-dummy"
+      serverCA: "dummy-server-ca.pem"
+      clientKey: "dummy-client.key"
+      clientCertificate: "dummy-client.crt"
+
+  minio:
+    enabled: false                           # ✅ moved under `global`
 
 certmanager:
   install: false
@@ -37,9 +40,6 @@ postgresql:
 
 redis:
   install: true
-
-minio:
-  enabled: false
 
 gitlab-runner:
   install: false
