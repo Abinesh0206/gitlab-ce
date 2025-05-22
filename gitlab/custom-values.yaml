@@ -2,8 +2,8 @@ global:
   edition: ce
 
   hosts:
-    domain: gitlab.example.com   # Replace this
-    externalIP: ""
+    domain: gitlab.example.com  # Change to your domain
+    externalIP: ""              # Optional
 
   ingress:
     configureCertmanager: false
@@ -45,8 +45,21 @@ gitlab-runner:
 
 gitlab:
   rails:
-    objectStore:
-      enabled: false
+    artifacts:
+      objectStore:
+        enabled: false
+    lfs:
+      objectStore:
+        enabled: false
+    uploads:
+      objectStore:
+        enabled: false
+    packages:
+      objectStore:
+        enabled: false
+    backups:
+      objectStore:
+        enabled: false
 
 toolbox:
   backups:
