@@ -2,8 +2,8 @@ global:
   edition: ce
 
   hosts:
-    domain: gitlab.example.com  # Change to your domain
-    externalIP: ""              # Optional
+    domain: gitlab.example.com   # Change to your real domain
+    externalIP: ""               # Optional, leave blank if not needed
 
   ingress:
     configureCertmanager: false
@@ -16,17 +16,14 @@ global:
     database: "mydatabase"
     username: "dbadmin"
     password:
-      secret: "gitlab-postgres-secret"
+      secret: "gitlab-postgres-secret"  # Create this secret with your DB password
       key: "password"
     ssl:
       enabled: false
-      secret: "gitlab-ssl-dummy"
+      secret: "gitlab-ssl-dummy"        # Create this dummy secret as explained earlier
       serverCA: "dummy-server-ca.pem"
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
-
-  minio:
-    enabled: false
 
 certmanager:
   install: false
@@ -39,6 +36,9 @@ postgresql:
 
 redis:
   install: true
+
+minio:
+  enabled: false
 
 gitlab-runner:
   install: false
