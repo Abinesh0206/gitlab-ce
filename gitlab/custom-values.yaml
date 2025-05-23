@@ -1,5 +1,5 @@
 ## GitLab CE values.yaml with internal Redis, Gitaly, and external PostgreSQL
-## Cert-manager and issuer requirements fully disabled
+## Updated for GitLab chart v7.0+ with Gitaly in global section
 
 global:
   ## GitLab edition (ce/ee)
@@ -33,6 +33,22 @@ global:
     enabled: false
     tls:
       enabled: false
+  
+  ## Gitaly configuration (moved from gitlab.gitaly per new requirements)
+  gitaly:
+    enabled: true
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: ""  # Set your storage class if needed
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
   
   ## Object storage configuration (all disabled)
   appConfig:
@@ -80,21 +96,7 @@ postgresql:
 
 ## GitLab components
 gitlab:
-  ## Gitaly (Git repository storage - now properly enabled)
-  gitaly:
-    enabled: true
-    replicas: 1
-    persistence:
-      enabled: true
-      size: 10Gi  # Recommended minimum for production
-      storageClass: ""  # Set if needed
-    resources:
-      requests:
-        cpu: 200m
-        memory: 512Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
+  ## Note: gitaly config removed from here and moved to global
   
   ## Webservice
   webservice:
