@@ -28,33 +28,30 @@ global:
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
 
-  # Disable all object storage
+  # Global object storage configuration
   appConfig:
     object_store:
       enabled: false
-      connection: {}
+      connection:
+        secret: "gitlab-object-storage-dummy"
+        key: "connection"
       storage_options: {}
 
-# Disable additional components
 certmanager:
   install: false
 
 nginx-ingress:
   enabled: false
 
-# Use external PostgreSQL
 postgresql:
   install: false
 
-# Use in-cluster Redis (enabled)
 redis:
   install: true
 
-# Disable GitLab Runner
 gitlab-runner:
   install: false
 
-# Disable all object storage backends
 gitlab:
   toolbox:
     backups:
