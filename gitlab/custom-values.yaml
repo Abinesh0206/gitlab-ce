@@ -1,5 +1,5 @@
-## Full GitLab CE values.yaml with internal Redis
-## Using the latest stable version (as of 2023)
+## GitLab CE values.yaml with internal Redis and external PostgreSQL
+## Cert-manager and issuer requirements fully disabled
 
 global:
   ## GitLab edition (ce/ee)
@@ -27,10 +27,31 @@ global:
   email:
     enabled: false
   
-  ## Disable unused components
+  ## Ingress and TLS settings (fully disabled)
   ingress:
     configureCertmanager: false
     enabled: false
+    tls:
+      enabled: false
+  
+  ## Object storage configuration (all disabled)
+  appConfig:
+    artifacts:
+      enabled: false
+    lfs:
+      enabled: false
+    uploads:
+      enabled: false
+    packages:
+      enabled: false
+    externalDiffs:
+      enabled: false
+    terraformState:
+      enabled: false
+    dependencyProxy:
+      enabled: false
+
+  ## MinIO disabled
   minio:
     enabled: false
 
@@ -49,10 +70,11 @@ redis:
   persistence:
     enabled: true
     size: 8Gi
+    storageClass: ""  # Set your storage class if needed
   metrics:
     enabled: false
 
-## PostgreSQL (disabled since using external)
+## PostgreSQL (disabled - using external)
 postgresql:
   install: false
 
@@ -87,7 +109,7 @@ gitlab:
   toolbox:
     enabled: false
 
-## Disable monitoring
+## Monitoring (all disabled)
 prometheus:
   install: false
 grafana:
@@ -95,33 +117,17 @@ grafana:
 gitlab-exporter:
   enabled: false
 
-## Disable cert-manager
+## Cert-manager (fully disabled with issuer bypass)
 certmanager:
   install: false
+  issuer:
+    email: ""  # Empty string to bypass validation
+    server: ""
 
-## Disable NGINX Ingress
+## NGINX Ingress (disabled)
 nginx-ingress:
   enabled: false
 
-## Disable GitLab Runner
+## GitLab Runner (disabled)
 gitlab-runner:
   install: false
-
-## Object storage configuration (simplified)
-global:
-  appConfig:
-    # Disable object storage for all components
-    artifacts:
-      enabled: false
-    lfs:
-      enabled: false
-    uploads:
-      enabled: false
-    packages:
-      enabled: false
-    externalDiffs:
-      enabled: false
-    terraformState:
-      enabled: false
-    dependencyProxy:
-      enabled: false
