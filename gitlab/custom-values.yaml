@@ -3,12 +3,12 @@ global:
   edition: ce
   hosts:
     domain: gitlab.example.com  # CHANGE THIS to your domain
-    https: false               # Set to true if using TLS
-    externalIP: ""             # Set if you need external IP
+    https: false
+    externalIP: ""
     gitlab:
-      name: "gitlab.example.com" # Same as domain
+      name: "gitlab.example.com"
 
-  # PostgreSQL configuration (external)
+  # PostgreSQL configuration with dummy SSL secret
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
@@ -17,81 +17,67 @@ global:
     password:
       secret: "gitlab-postgres-secret"
       key: "password"
-    # Explicit SSL configuration to prevent the error
     ssl:
       enabled: false
-      secret: ""  # Explicit empty secret
-      clientMode: "disable"  # Explicitly disable SSL
+      secret: "gitlab-postgresql-dummy-ssl"  # Required even when disabled
+      clientMode: "disable"
+      serverCA: ""
+      clientCertificate: ""
+      clientKey: ""
 
-  # Disable components we don't need
+  # Disable unused components
   ingress:
     configureCertmanager: false
     enabled: false
   minio:
-    enabled: false  # Using external object storage
+    enabled: false
+
+### Create dummy SSL secret first:
+# kubectl create secret generic gitlab-postgresql-dummy-ssl --namespace=gitlab --from-literal=server-ca="" --from-literal=client-cert="" --from-literal=client-key=""
 
 ### Component configuration
-# Disable bundled PostgreSQL
 postgresql:
   install: false
 
-# Redis configuration
 redis:
   install: true
-  enabled: true  # For clarity
+  enabled: true
 
-# Disable cert-manager
 certmanager:
   install: false
 
-# Disable ingress controller
 nginx-ingress:
   enabled: false
 
-# Disable runner
 gitlab-runner:
   install: false
 
-### GitLab core services configuration
+### GitLab core services
 gitlab:
-  # Webservice (main GitLab component)
   webservice:
     enabled: true
     replicas: 1
     service:
       type: ClusterIP
     resources:
-      requests:
-        cpu: "500m"
-        memory: "1.5Gi"
       limits:
         cpu: "1"
         memory: "2Gi"
 
-  # Sidekiq (background jobs)
   sidekiq:
     enabled: true
     replicas: 1
     resources:
-      requests:
-        cpu: "300m"
-        memory: "1Gi"
       limits:
         cpu: "500m"
         memory: "1.5Gi"
 
-  # GitLab Shell
   gitlab-shell:
     enabled: true
-    replicas: 1
-    service:
-      type: ClusterIP
 
-  # Toolbox (disabled)
   toolbox:
     enabled: false
 
-  # Rails migrations
   rails:
     migrations:
       enabled: true
@@ -103,12 +89,3 @@ grafana:
   install: false
 gitlab-exporter:
   enabled: false
-
-### Object storage configuration (example - adjust as needed)
-# global:
-#   appConfig:
-#     object_store:
-#       enabled: true
-#       connection:
-#         secret: gitlab-object-storage
-#         key: config
