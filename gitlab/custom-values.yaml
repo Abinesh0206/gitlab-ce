@@ -2,13 +2,13 @@
 global:
   edition: ce
   hosts:
-    domain: gitlab.example.com  # CHANGE THIS to your domain
+    domain: gitlab.example.com  # MUST CHANGE to your real domain
     https: false
     externalIP: ""
     gitlab:
-      name: "gitlab.example.com"
+      name: "gitlab.example.com"  # MUST match domain above
 
-  # PostgreSQL configuration with dummy SSL secret
+  # PostgreSQL configuration
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
@@ -19,11 +19,12 @@ global:
       key: "password"
     ssl:
       enabled: false
-      secret: "gitlab-postgresql-dummy-ssl"  # Required even when disabled
+      secret: "gitlab-postgresql-ssl-dummy"  # Required dummy secret
       clientMode: "disable"
-      serverCA: ""
-      clientCertificate: ""
-      clientKey: ""
+      # These must match the keys in your dummy secret
+      serverCA: "server-ca"  
+      clientCertificate: "client-cert"
+      clientKey: "client-key"
 
   # Disable unused components
   ingress:
@@ -31,9 +32,6 @@ global:
     enabled: false
   minio:
     enabled: false
-
-### Create dummy SSL secret first:
-# kubectl create secret generic gitlab-postgresql-dummy-ssl --namespace=gitlab --from-literal=server-ca="" --from-literal=client-cert="" --from-literal=client-key=""
 
 ### Component configuration
 postgresql:
