@@ -1,22 +1,26 @@
 global:
   edition: ce
+  upgrade:
+    checkEnabled: false  # Disables upgrade path validation
+
+  # Host configuration
   hosts:
     domain: gitlab.example.com
     https: false
     externalIP: ""
-  
+
+  # Disable all ingress-related components
   ingress:
     configureCertmanager: false
     enabled: false
     tls:
       enabled: false
-  
+
+  # Disable MinIO (local object storage)
   minio:
     enabled: false
-  
-  gitaly:
-    enabled: true
-  
+
+  # External PostgreSQL configuration
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
@@ -32,7 +36,19 @@ global:
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
 
+  # Gitaly configuration (required)
+  gitaly:
+    enabled: true
+
+  # Object storage configuration (dummy values)
   appConfig:
+    object_store:
+      enabled: false
+      connection:
+        secret: "gitlab-object-storage-dummy"
+        key: "connection"
+
+    # Disable all specific object storage types
     artifacts:
       enabled: false
       object_store:
@@ -69,21 +85,24 @@ global:
           secret: "gitlab-object-storage-dummy"
           key: "connection"
 
+# Disable additional components
 certmanager:
   install: false
 
 nginx-ingress:
   enabled: false
 
+# Database configuration
 postgresql:
-  install: false
+  install: false  # Using external PostgreSQL
 
 redis:
-  install: true
+  install: true  # Using in-cluster Redis
 
 gitlab-runner:
   install: false
 
+# Core GitLab components
 gitlab:
   toolbox:
     enabled: false
@@ -93,6 +112,8 @@ gitlab:
 
   webservice:
     enabled: true
+    service:
+      type: ClusterIP  # Change to LoadBalancer if needed
 
   sidekiq:
     enabled: true
