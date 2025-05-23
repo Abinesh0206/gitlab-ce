@@ -2,6 +2,7 @@ global:
   edition: ce
   hosts:
     domain: gitlab.example.com
+    https: false
     externalIP: ""
   
   ingress:
@@ -12,6 +13,9 @@ global:
   
   minio:
     enabled: false
+  
+  gitaly:
+    enabled: true
   
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
@@ -28,15 +32,42 @@ global:
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
 
-  gitaly:
-    enabled: true
-
   appConfig:
-    object_store:
+    artifacts:
       enabled: false
-      connection:
-        secret: "gitlab-object-storage-dummy"
-        key: "connection"
+      object_store:
+        enabled: false
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
+    lfs:
+      enabled: false
+      object_store:
+        enabled: false
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
+    uploads:
+      enabled: false
+      object_store:
+        enabled: false
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
+    packages:
+      enabled: false
+      object_store:
+        enabled: false
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
+    backups:
+      enabled: false
+      object_store:
+        enabled: false
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
 
 certmanager:
   install: false
@@ -72,38 +103,3 @@ gitlab:
   rails:
     migrations:
       enabled: true
-    artifacts:
-      enabled: false
-      objectStore:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    lfs:
-      enabled: false
-      objectStore:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    uploads:
-      enabled: false
-      objectStore:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    packages:
-      enabled: false
-      objectStore:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    backups:
-      enabled: false
-      objectStore:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
