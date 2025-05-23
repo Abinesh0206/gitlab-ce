@@ -2,15 +2,14 @@ global:
   edition: ce
 
   hosts:
-    domain: gitlab.example.com   # Change to your real domain
-    externalIP: ""               # Optional, leave blank if not needed
+    domain: gitlab.example.com
+    externalIP: ""
 
   ingress:
     configureCertmanager: false
     tls:
       enabled: false
 
-  # Minio configuration moved under global
   minio:
     enabled: false
 
@@ -20,11 +19,11 @@ global:
     database: "mydatabase"
     username: "dbadmin"
     password:
-      secret: "gitlab-postgres-secret"  # Create this secret with your DB password
+      secret: "gitlab-postgres-secret"
       key: "password"
     ssl:
       enabled: false
-      secret: "gitlab-ssl-dummy"        # Create this dummy secret as explained earlier
+      secret: "gitlab-ssl-dummy"
       serverCA: "dummy-server-ca.pem"
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
@@ -41,32 +40,43 @@ postgresql:
 redis:
   install: true
 
-# Removed the standalone minio.enabled since it's now under global
-# minio:
-#   enabled: false
-
 gitlab-runner:
   install: false
 
 gitlab:
+  toolbox:
+    backups:
+      objectStorage:
+        enabled: false
+        config: {}  # Empty config since disabled
+
   rails:
     artifacts:
       objectStore:
         enabled: false
+        connection: {}  # Empty connection since disabled
     lfs:
       objectStore:
         enabled: false
+        connection: {}  # Empty connection since disabled
     uploads:
       objectStore:
         enabled: false
+        connection: {}  # Empty connection since disabled
     packages:
       objectStore:
         enabled: false
+        connection: {}  # Empty connection since disabled
     backups:
       objectStore:
         enabled: false
+        connection: {}  # Empty connection since disabled
 
-toolbox:
-  backups:
-    objectStorage:
-      enabled: false
+# If you need any object storage in the future, configure like this:
+# global:
+#   appConfig:
+#     object_store:
+#       enabled: true
+#       connection:
+#         secret: gitlab-object-storage
+#         key: connection
