@@ -1,4 +1,4 @@
-## GitLab CE values.yaml with internal Redis and external PostgreSQL
+## GitLab CE values.yaml with internal Redis, Gitaly, and external PostgreSQL
 ## Cert-manager and issuer requirements fully disabled
 
 global:
@@ -80,6 +80,23 @@ postgresql:
 
 ## GitLab components
 gitlab:
+  ## Gitaly (Git repository storage - now properly enabled)
+  gitaly:
+    enabled: true
+    replicas: 1
+    persistence:
+      enabled: true
+      size: 10Gi  # Recommended minimum for production
+      storageClass: ""  # Set if needed
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+  
+  ## Webservice
   webservice:
     enabled: true
     replicas: 1
@@ -91,6 +108,7 @@ gitlab:
         cpu: 1
         memory: 2Gi
   
+  ## Sidekiq
   sidekiq:
     enabled: true
     replicas: 1
@@ -102,10 +120,12 @@ gitlab:
         cpu: 500m
         memory: 1.5Gi
   
+  ## GitLab Shell
   gitlab-shell:
     enabled: true
     replicas: 1
   
+  ## Toolbox
   toolbox:
     enabled: false
 
