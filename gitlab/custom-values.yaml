@@ -1,27 +1,14 @@
-# ============== CORE CONFIGURATION ==============
+### Global GitLab settings
 global:
   edition: ce
-  upgrade:
-    checkEnabled: false  # Disable upgrade checks
-
-  # Host configuration
   hosts:
-    domain: gitlab.example.com  # CHANGE THIS
-    https: false
-    externalIP: ""
+    domain: gitlab.example.com  # CHANGE THIS to your domain
+    https: false               # Set to true if using TLS
+    externalIP: ""             # Set if you need external IP
+    gitlab:
+      name: "gitlab.example.com" # Same as domain
 
-  # Disable all ingress-related components
-  ingress:
-    configureCertmanager: false
-    enabled: false
-    tls:
-      enabled: false
-
-  # Disable MinIO
-  minio:
-    enabled: false
-
-  # External PostgreSQL
+  # PostgreSQL configuration (external)
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
@@ -30,64 +17,98 @@ global:
     password:
       secret: "gitlab-postgres-secret"
       key: "password"
+    # Explicit SSL configuration to prevent the error
     ssl:
       enabled: false
+      secret: ""  # Explicit empty secret
+      clientMode: "disable"  # Explicitly disable SSL
 
-  # Gitaly configuration
-  gitaly:
-    enabled: true
+  # Disable components we don't need
+  ingress:
+    configureCertmanager: false
+    enabled: false
+  minio:
+    enabled: false  # Using external object storage
 
-  # Object storage (disabled)
-  appConfig:
-    object_store:
-      enabled: false
-      connection:
-        secret: "gitlab-object-storage-dummy"
-        key: "connection"
-
-# ============== COMPONENT CONFIGURATION ==============
-certmanager:
-  install: false
-
-nginx-ingress:
-  enabled: false
-
-# Redis configuration (fixed)
-redis:
-  install: true  # CORRECT: Use only this, not 'enabled'
-
+### Component configuration
 # Disable bundled PostgreSQL
 postgresql:
   install: false
 
-# Disable GitLab Runner
+# Redis configuration
+redis:
+  install: true
+  enabled: true  # For clarity
+
+# Disable cert-manager
+certmanager:
+  install: false
+
+# Disable ingress controller
+nginx-ingress:
+  enabled: false
+
+# Disable runner
 gitlab-runner:
   install: false
 
-# ============== GITLAB CORE SERVICES ==============
+### GitLab core services configuration
 gitlab:
-  toolbox:
-    enabled: false
-
+  # Webservice (main GitLab component)
   webservice:
     enabled: true
+    replicas: 1
     service:
-      type: ClusterIP  # Change to LoadBalancer if needed
+      type: ClusterIP
     resources:
+      requests:
+        cpu: "500m"
+        memory: "1.5Gi"
       limits:
         cpu: "1"
         memory: "2Gi"
 
+  # Sidekiq (background jobs)
   sidekiq:
     enabled: true
+    replicas: 1
     resources:
+      requests:
+        cpu: "300m"
+        memory: "1Gi"
       limits:
         cpu: "500m"
-        memory: "1Gi"
+        memory: "1.5Gi"
 
+  # GitLab Shell
   gitlab-shell:
     enabled: true
+    replicas: 1
+    service:
+      type: ClusterIP
 
+  # Toolbox (disabled)
+  toolbox:
+    enabled: false
+
+  # Rails migrations
   rails:
     migrations:
       enabled: true
+
+### Monitoring (disabled)
+prometheus:
+  install: false
+grafana:
+  install: false
+gitlab-exporter:
+  enabled: false
+
+### Object storage configuration (example - adjust as needed)
+# global:
+#   appConfig:
+#     object_store:
+#       enabled: true
+#       connection:
+#         secret: gitlab-object-storage
+#         key: config
