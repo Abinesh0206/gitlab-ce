@@ -39,7 +39,7 @@ postgresql:
 
 redis:
   install: true
-  enabled: true
+  #enabled: true
 
 certmanager:
   install: false
