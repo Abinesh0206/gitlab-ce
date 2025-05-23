@@ -1,14 +1,19 @@
-### Global GitLab settings
+## Full GitLab CE values.yaml with internal Redis
+## Using the latest stable version (as of 2023)
+
 global:
+  ## GitLab edition (ce/ee)
   edition: ce
+  
+  ## Domain settings
   hosts:
-    domain: gitlab.example.com  # MUST CHANGE to your real domain
+    domain: gitlab.example.com
     https: false
     externalIP: ""
     gitlab:
-      name: "gitlab.example.com"  # MUST match domain above
-
-  # PostgreSQL configuration
+      name: "gitlab.example.com"
+  
+  ## PostgreSQL configuration (external)
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
@@ -17,73 +22,106 @@ global:
     password:
       secret: "gitlab-postgres-secret"
       key: "password"
-    ssl:
-      enabled: false
-      secret: "gitlab-postgresql-ssl-dummy"  # Required dummy secret
-      clientMode: "disable"
-      # These must match the keys in your dummy secret
-      serverCA: "server-ca"  
-      clientCertificate: "client-cert"
-      clientKey: "client-key"
-
-  # Disable unused components
+  
+  ## Email configuration
+  email:
+    enabled: false
+  
+  ## Disable unused components
   ingress:
     configureCertmanager: false
     enabled: false
   minio:
     enabled: false
 
-### Component configuration
+## Redis configuration (internal)
+redis:
+  install: true
+  image:
+    tag: 7.0.11
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  persistence:
+    enabled: true
+    size: 8Gi
+  metrics:
+    enabled: false
+
+## PostgreSQL (disabled since using external)
 postgresql:
   install: false
 
-redis:
-  install: true
-  #enabled: true
-
-certmanager:
-  install: false
-
-nginx-ingress:
-  enabled: false
-
-gitlab-runner:
-  install: false
-
-### GitLab core services
+## GitLab components
 gitlab:
   webservice:
     enabled: true
     replicas: 1
-    service:
-      type: ClusterIP
     resources:
+      requests:
+        cpu: 500m
+        memory: 1.5Gi
       limits:
-        cpu: "1"
-        memory: "2Gi"
-
+        cpu: 1
+        memory: 2Gi
+  
   sidekiq:
     enabled: true
     replicas: 1
     resources:
+      requests:
+        cpu: 300m
+        memory: 1Gi
       limits:
-        cpu: "500m"
-        memory: "1.5Gi"
-
+        cpu: 500m
+        memory: 1.5Gi
+  
   gitlab-shell:
     enabled: true
-
+    replicas: 1
+  
   toolbox:
     enabled: false
 
-  rails:
-    migrations:
-      enabled: true
-
-### Monitoring (disabled)
+## Disable monitoring
 prometheus:
   install: false
 grafana:
   install: false
 gitlab-exporter:
   enabled: false
+
+## Disable cert-manager
+certmanager:
+  install: false
+
+## Disable NGINX Ingress
+nginx-ingress:
+  enabled: false
+
+## Disable GitLab Runner
+gitlab-runner:
+  install: false
+
+## Object storage configuration (simplified)
+global:
+  appConfig:
+    # Disable object storage for all components
+    artifacts:
+      enabled: false
+    lfs:
+      enabled: false
+    uploads:
+      enabled: false
+    packages:
+      enabled: false
+    externalDiffs:
+      enabled: false
+    terraformState:
+      enabled: false
+    dependencyProxy:
+      enabled: false
