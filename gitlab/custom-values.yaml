@@ -1,18 +1,17 @@
 global:
   edition: ce
-
   hosts:
     domain: gitlab.example.com
     externalIP: ""
-
+  
   ingress:
     configureCertmanager: false
     tls:
       enabled: false
-
+  
   minio:
     enabled: false
-
+  
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
@@ -27,6 +26,13 @@ global:
       serverCA: "dummy-server-ca.pem"
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
+
+  # Global object storage configuration (required even when disabled)
+  appConfig:
+    object_store:
+      enabled: false
+      connection: {}
+      storage_options: {}
 
 certmanager:
   install: false
@@ -48,35 +54,41 @@ gitlab:
     backups:
       objectStorage:
         enabled: false
-        config: {}  # Empty config since disabled
+        config:
+          secret: "gitlab-object-storage-dummy"  # Dummy secret name
+          key: "config"
 
   rails:
     artifacts:
       objectStore:
         enabled: false
-        connection: {}  # Empty connection since disabled
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
     lfs:
       objectStore:
         enabled: false
-        connection: {}  # Empty connection since disabled
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
     uploads:
       objectStore:
         enabled: false
-        connection: {}  # Empty connection since disabled
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
     packages:
       objectStore:
         enabled: false
-        connection: {}  # Empty connection since disabled
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
     backups:
       objectStore:
         enabled: false
-        connection: {}  # Empty connection since disabled
+        connection:
+          secret: "gitlab-object-storage-dummy"
+          key: "connection"
 
-# If you need any object storage in the future, configure like this:
-# global:
-#   appConfig:
-#     object_store:
-#       enabled: true
-#       connection:
-#         secret: gitlab-object-storage
-#         key: connection
+# Create a dummy secret for object storage (even though it's disabled)
+# kubectl create secret generic gitlab-object-storage-dummy --from-literal=connection='{}' --from-literal=config='{}'
