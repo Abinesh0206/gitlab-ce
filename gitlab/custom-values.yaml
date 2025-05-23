@@ -28,14 +28,12 @@ global:
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
 
-  # Global object storage configuration
   appConfig:
     object_store:
       enabled: false
       connection:
         secret: "gitlab-object-storage-dummy"
         key: "connection"
-      storage_options: {}
 
 certmanager:
   install: false
@@ -48,45 +46,63 @@ postgresql:
 
 redis:
   install: true
+  enabled: true
 
 gitlab-runner:
   install: false
 
 gitlab:
   toolbox:
+    enabled: false
     backups:
       objectStorage:
         enabled: false
-        config:
-          secret: "gitlab-object-storage-dummy"
-          key: "config"
+
+  gitaly:
+    enabled: true
+
+  webservice:
+    enabled: true
+
+  sidekiq:
+    enabled: true
+
+  gitlab-shell:
+    enabled: true
 
   rails:
+    migrations:
+      enabled: true
     artifacts:
+      enabled: false
       objectStore:
         enabled: false
         connection:
           secret: "gitlab-object-storage-dummy"
           key: "connection"
     lfs:
+      enabled: false
       objectStore:
         enabled: false
         connection:
           secret: "gitlab-object-storage-dummy"
           key: "connection"
     uploads:
+      enabled: false
       objectStore:
         enabled: false
         connection:
           secret: "gitlab-object-storage-dummy"
           key: "connection"
     packages:
+      enabled: false
       objectStore:
         enabled: false
         connection:
           secret: "gitlab-object-storage-dummy"
           key: "connection"
     backups:
+      enabled: false
       objectStore:
         enabled: false
         connection:
