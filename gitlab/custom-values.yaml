@@ -6,6 +6,7 @@ global:
   
   ingress:
     configureCertmanager: false
+    enabled: false
     tls:
       enabled: false
   
@@ -27,35 +28,40 @@ global:
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
 
-  # Global object storage configuration (required even when disabled)
+  # Disable all object storage
   appConfig:
     object_store:
       enabled: false
       connection: {}
       storage_options: {}
 
+# Disable additional components
 certmanager:
   install: false
 
 nginx-ingress:
   enabled: false
 
+# Use external PostgreSQL
 postgresql:
   install: false
 
+# Use in-cluster Redis (enabled)
 redis:
   install: true
 
+# Disable GitLab Runner
 gitlab-runner:
   install: false
 
+# Disable all object storage backends
 gitlab:
   toolbox:
     backups:
       objectStorage:
         enabled: false
         config:
-          secret: "gitlab-object-storage-dummy"  # Dummy secret name
+          secret: "gitlab-object-storage-dummy"
           key: "config"
 
   rails:
@@ -89,6 +95,3 @@ gitlab:
         connection:
           secret: "gitlab-object-storage-dummy"
           key: "connection"
-
-# Create a dummy secret for object storage (even though it's disabled)
-# kubectl create secret generic gitlab-object-storage-dummy --from-literal=connection='{}' --from-literal=config='{}'
