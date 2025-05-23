@@ -1,53 +1,43 @@
-# =============================================
-# Minimal GitLab CE Helm Chart Configuration
-# - Disables all unnecessary components
-# - Uses external PostgreSQL
-# - Bypasses upgrade checks
-# =============================================
-
+# ============== CORE CONFIGURATION ==============
 global:
   edition: ce
   upgrade:
-    checkEnabled: false  # Critical: Disables upgrade path validation
+    checkEnabled: false  # Disable upgrade checks
 
-  # Host Configuration
+  # Host configuration
   hosts:
-    domain: gitlab.example.com  # Change to your domain
+    domain: gitlab.example.com  # CHANGE THIS
     https: false
     externalIP: ""
 
-  # Disable Ingress
+  # Disable all ingress-related components
   ingress:
     configureCertmanager: false
     enabled: false
     tls:
       enabled: false
 
-  # Disable MinIO (local object storage)
+  # Disable MinIO
   minio:
     enabled: false
 
-  # External PostgreSQL Configuration
+  # External PostgreSQL
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
     database: "mydatabase"
     username: "dbadmin"
     password:
-      secret: "gitlab-postgres-secret"  # Must exist in namespace
+      secret: "gitlab-postgres-secret"
       key: "password"
     ssl:
       enabled: false
-      secret: "gitlab-ssl-dummy"  # Dummy secret
-      serverCA: "dummy-server-ca.pem"
-      clientKey: "dummy-client.key"
-      clientCertificate: "dummy-client.crt"
 
-  # Gitaly (Required)
+  # Gitaly configuration
   gitaly:
     enabled: true
 
-  # Object Storage (Disabled with dummy values)
+  # Object storage (disabled)
   appConfig:
     object_store:
       enabled: false
@@ -55,101 +45,49 @@ global:
         secret: "gitlab-object-storage-dummy"
         key: "connection"
 
-    # Disable all specific storage types
-    artifacts:
-      enabled: false
-      object_store:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    lfs:
-      enabled: false
-      object_store:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    uploads:
-      enabled: false
-      object_store:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    packages:
-      enabled: false
-      object_store:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-    backups:
-      enabled: false
-      object_store:
-        enabled: false
-        connection:
-          secret: "gitlab-object-storage-dummy"
-          key: "connection"
-
-# =============================================
-# Component Configuration
-# =============================================
-
-# Disable Cert-Manager
+# ============== COMPONENT CONFIGURATION ==============
 certmanager:
   install: false
 
-# Disable NGINX Ingress
 nginx-ingress:
   enabled: false
 
-# Database Configuration
-postgresql:
-  install: false  # Using external PostgreSQL
-
+# Redis configuration (fixed)
 redis:
-  install: true  # In-cluster Redis
-  enabled: true  # Required for Redis subchart
+  install: true  # CORRECT: Use only this, not 'enabled'
+
+# Disable bundled PostgreSQL
+postgresql:
+  install: false
 
 # Disable GitLab Runner
 gitlab-runner:
   install: false
 
-# =============================================
-# Core GitLab Services
-# =============================================
-
+# ============== GITLAB CORE SERVICES ==============
 gitlab:
   toolbox:
     enabled: false
-    backups:
-      objectStorage:
-        enabled: false
 
-  # Web Service (Main Component)
   webservice:
     enabled: true
     service:
-      type: ClusterIP  # Change to LoadBalancer for external access
+      type: ClusterIP  # Change to LoadBalancer if needed
     resources:
       limits:
-        cpu: 1000m
-        memory: 2Gi
+        cpu: "1"
+        memory: "2Gi"
 
-  # Background Jobs
   sidekiq:
     enabled: true
     resources:
       limits:
-        cpu: 500m
-        memory: 1Gi
+        cpu: "500m"
+        memory: "1Gi"
 
-  # SSH Access
   gitlab-shell:
     enabled: true
 
-  # Database Migrations
   rails:
     migrations:
       enabled: true
