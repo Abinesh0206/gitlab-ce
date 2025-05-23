@@ -1,15 +1,22 @@
+# =============================================
+# Minimal GitLab CE Helm Chart Configuration
+# - Disables all unnecessary components
+# - Uses external PostgreSQL
+# - Bypasses upgrade checks
+# =============================================
+
 global:
   edition: ce
   upgrade:
-    checkEnabled: false  # Disables upgrade path validation
+    checkEnabled: false  # Critical: Disables upgrade path validation
 
-  # Host configuration
+  # Host Configuration
   hosts:
-    domain: gitlab.example.com
+    domain: gitlab.example.com  # Change to your domain
     https: false
     externalIP: ""
 
-  # Disable all ingress-related components
+  # Disable Ingress
   ingress:
     configureCertmanager: false
     enabled: false
@@ -20,27 +27,27 @@ global:
   minio:
     enabled: false
 
-  # External PostgreSQL configuration
+  # External PostgreSQL Configuration
   psql:
     host: "dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com"
     port: 5432
     database: "mydatabase"
     username: "dbadmin"
     password:
-      secret: "gitlab-postgres-secret"
+      secret: "gitlab-postgres-secret"  # Must exist in namespace
       key: "password"
     ssl:
       enabled: false
-      secret: "gitlab-ssl-dummy"
+      secret: "gitlab-ssl-dummy"  # Dummy secret
       serverCA: "dummy-server-ca.pem"
       clientKey: "dummy-client.key"
       clientCertificate: "dummy-client.crt"
 
-  # Gitaly configuration (required)
+  # Gitaly (Required)
   gitaly:
     enabled: true
 
-  # Object storage configuration (dummy values)
+  # Object Storage (Disabled with dummy values)
   appConfig:
     object_store:
       enabled: false
@@ -48,7 +55,7 @@ global:
         secret: "gitlab-object-storage-dummy"
         key: "connection"
 
-    # Disable all specific object storage types
+    # Disable all specific storage types
     artifacts:
       enabled: false
       object_store:
@@ -85,24 +92,34 @@ global:
           secret: "gitlab-object-storage-dummy"
           key: "connection"
 
-# Disable additional components
+# =============================================
+# Component Configuration
+# =============================================
+
+# Disable Cert-Manager
 certmanager:
   install: false
 
+# Disable NGINX Ingress
 nginx-ingress:
   enabled: false
 
-# Database configuration
+# Database Configuration
 postgresql:
   install: false  # Using external PostgreSQL
 
 redis:
-  install: true  # Using in-cluster Redis
+  install: true  # In-cluster Redis
+  enabled: true  # Required for Redis subchart
 
+# Disable GitLab Runner
 gitlab-runner:
   install: false
 
-# Core GitLab components
+# =============================================
+# Core GitLab Services
+# =============================================
+
 gitlab:
   toolbox:
     enabled: false
@@ -110,17 +127,29 @@ gitlab:
       objectStorage:
         enabled: false
 
+  # Web Service (Main Component)
   webservice:
     enabled: true
     service:
-      type: ClusterIP  # Change to LoadBalancer if needed
+      type: ClusterIP  # Change to LoadBalancer for external access
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
 
+  # Background Jobs
   sidekiq:
     enabled: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
 
+  # SSH Access
   gitlab-shell:
     enabled: true
 
+  # Database Migrations
   rails:
     migrations:
       enabled: true
