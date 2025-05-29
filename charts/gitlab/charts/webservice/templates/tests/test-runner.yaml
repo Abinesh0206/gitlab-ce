@@ -2,18 +2,18 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ template "fullname" . }}-test-runner-{{ randAlphaNum 5 | lower }}
-  namespace: {{ $.Release.Namespace }}
+  name: {{ .Release.Name }}-webservice-test-{{ randAlphaNum 5 | lower }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
   labels:
-    {{- include "gitlab.standardLabels" . | nindent 4 }}
-    {{- include "gitlab.commonLabels" . | nindent 4 }}
+    app: {{ .Release.Name }}-webservice
+    release: {{ .Release.Name }}
 spec:
   containers:
   - name: test-runner
-    image: {{ include "webservice.image" . }}
+    image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
     command: ['sh', '/tests/test_login']
     volumeMounts:
       - name: tests
@@ -25,12 +25,12 @@ spec:
   volumes:
   - name: tests
     configMap:
-      name: {{ template "fullname" . }}-tests
+      name: {{ .Release.Name }}-webservice-tests
   - name: root-password
     secret:
-      secretName: {{ template "gitlab.migrations.initialRootPassword.secret" . }}
+      secretName: {{ .Release.Name }}-gitlab-initial-root-password
       items:
-        - key: {{ template "gitlab.migrations.initialRootPassword.key" . }}
+        - key: password
           path: initial_root_password
   restartPolicy: Never
-  {{- end }}
+{{- end }}
