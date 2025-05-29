@@ -1,15 +1,20 @@
-# Global GitLab settings
 global:
-  edition: ce  # Community Edition
+  edition: ce
   hosts:
-    domain: gitlab.example.com  # Change to your domain
-    https: false               # Set to 'true' if using TLS
+    domain: gitlab.example.com
+    https: false
     gitlab:
       name: "GitLab CE"
     ingress:
-      configureCertmanager: false  # Disable if not using cert-manager
+      configureCertmanager: false
 
-  # Use GitLab Community Edition (CE) images
+  # Service Account Configuration
+  serviceAccount:
+    enabled: true
+    create: true
+    name: gitlab-serviceaccount
+    automountServiceAccountToken: false
+
   communityImages:
     migrations:
       repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ce
@@ -22,7 +27,6 @@ global:
     workhorse:
       repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce
 
-  # Disable unused components
   psql:
     password:
       secret: gitlab-postgres
@@ -31,16 +35,16 @@ global:
     password:
       enabled: false
 
-# Disable tests (fixes "fullname template" error)
 webservice:
   tests:
     enabled: false
+  serviceAccount:
+    enabled: true
+    create: true
 
-# Disable GitLab Runner (enable if needed)
 gitlab-runner:
   enabled: false
 
-# PostgreSQL (embedded)
 postgresql:
   image:
     tag: "13.6"
@@ -48,28 +52,23 @@ postgresql:
     enabled: true
     size: 10Gi
 
-# Redis (embedded)
 redis:
   enabled: true
   persistence:
     enabled: true
 
-# NGINX Ingress (enable if no existing ingress controller)
 nginx-ingress:
   enabled: true
   controller:
     service:
       type: LoadBalancer
 
-# Cert-Manager (disable if not needed)
 certmanager:
   install: false
 
-# Prometheus monitoring (disable to reduce resources)
 prometheus:
   install: false
 
-# Resource limits (adjust based on your cluster)
 resources:
   webservice:
     requests:
