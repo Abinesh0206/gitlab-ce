@@ -1,37 +1,81 @@
 {{- if and .Values.enabled .Values.helmTests.enabled -}}
 apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-webservice-test-{{ randAlphaNum 5 | lower }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}-webservice
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: webservice
+spec:
+  containers:
+  - name: test-runner
+    image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+    imagePullPolicy: {{ .Values.image.pullPolicy }}
+    command: ['sh', '/tests/test_login']
+    env:
+    - name: GITLAB_URL
+      value: "http://{{ .Release.Name }}-webservice.{{ .Release.Namespace }}.svc"
+    volumeMounts:
+      - name: tests
+        mountPath: '/tests'
+      - name: root-password
+        readOnly: true
+        mountPath: /initial_root_password
+        subPath: initial_root_password
+  volumes:
+  - name: tests
+    configMap:
+      name: {{ .Release.Name }}-webservice-tests
+  - name: root-password
+    secret:
+      secretName: {{ .Release.Name }}-gitlab-initial-root-password
+      items:
+        - key: password
+          path: initial_root_password
+  restartPolicy: Never
+{{- end }}
+
+---
+
+### **Fixed `charts/webservice/templates/tests/test-configmap.yaml`**
+```yaml
+{{- if and .Values.enabled .Values.helmTests.enabled -}}
+apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "fullname" . }}-tests
-  namespace: {{ $.Release.Namespace }}
+  name: {{ .Release.Name }}-webservice-tests
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "gitlab.standardLabels" . | nindent 4 }}
-    {{- include "gitlab.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}-webservice
+    app.kubernetes.io/instance: {{ .Release.Name }}
 data:
   test_login: |
-    set -e
-    echo 'Start Test'
-    endpoint="{{ template "gitlab.gitlab.url" . }}"
-    cookie_read="-c /tmp/test_login.cookie"
-    cookie_readwrite="$cookie_read -b /tmp/test_login.cookie"
-
-    signin_url="$endpoint/users/sign_in"
-    echo "Login to create a session: $signin_url"
-    csrf=$(curl -L $signin_url --fail -s $cookie_read | grep -Po '<meta.*name="csrf-token".*content="\K[a-zA-Z0-9\+=\-\/]*')
-    curl -X POST $signin_url -s $cookie_readwrite -F "authenticity_token=$csrf" -F 'user[login]=root' -F "user[password]=$(cat /initial_root_password)"
-
-    profile_url="$endpoint/-/profile"
-    echo "Confirm session valid: $profile_url"
-    profile_status=$(curl -L -s -o /tmp/profile_output -w "%{http_code}" $cookie_readwrite $profile_url)
-
-    if [ "$profile_status" != "200" ]; then
-      echo "Error: Session Invalid"
-      cat /tmp/profile_output
-      exit 1
-    fi
-
-    echo 'Test Passed'
-    exit 0
-
-# Leave this here - This line denotes end of block to the parser.
+    #!/bin/sh
+    set -ex
+    
+    ENDPOINT="${GITLAB_URL:-http://localhost}"
+    echo "Testing GitLab at $ENDPOINT"
+    
+    # Wait for service to be ready
+    timeout 300 sh -c "until curl -sf $ENDPOINT/-/health; do sleep 5; done"
+    
+    # Get CSRF token
+    CSRF=$(curl -s "$ENDPOINT/users/sign_in" | grep -oP 'name="csrf-token" content="\K[^"]+')
+    
+    # Login
+    curl -v -X POST "$ENDPOINT/users/sign_in" \
+      -H "X-CSRF-Token: $CSRF" \
+      -F "user[login]=root" \
+      -F "user[password]=$(cat /initial_root_password)" \
+      -c /tmp/cookies
+    
+    # Verify session
+    curl -v "$ENDPOINT/-/profile" -b /tmp/cookies | grep -q "Dashboard"
+    
+    echo "Test passed successfully"
 {{- end }}
