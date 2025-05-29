@@ -1,0 +1,39 @@
+global:
+  edition: ce
+  hosts:
+    domain: gitlab.example.com  # Change to your domain
+    https: false               # Disable HTTPS if no TLS (or set true if using cert-manager)
+  
+  # Use GitLab Community Edition (CE) images
+  communityImages:
+    migrations:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ce
+    sidekiq:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce
+    toolbox:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ce
+    webservice:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce
+    workhorse:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce
+
+  # Disable PostgreSQL decomposition (simplify setup)
+  psql:
+    knownDecompositions:
+      - main
+
+# Disable unnecessary components
+gitlab-runner:
+  enabled: false
+
+nginx-ingress:
+  enabled: true   # Enable if no existing ingress controller
+
+certmanager:
+  install: false  # Disable if no cert-manager
+
+postgresql:
+  install: true   # Use embedded PostgreSQL (or set `false` for external DB)
+
+redis:
+  install: true   # Use embedded Redis
