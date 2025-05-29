@@ -1,9 +1,14 @@
+# Global GitLab settings
 global:
-  edition: ce
+  edition: ce  # Community Edition
   hosts:
     domain: gitlab.example.com  # Change to your domain
-    https: false               # Disable HTTPS if no TLS (or set true if using cert-manager)
-  
+    https: false               # Set to 'true' if using TLS
+    gitlab:
+      name: "GitLab CE"
+    ingress:
+      configureCertmanager: false  # Disable if not using cert-manager
+
   # Use GitLab Community Edition (CE) images
   communityImages:
     migrations:
@@ -17,23 +22,64 @@ global:
     workhorse:
       repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce
 
-  # Disable PostgreSQL decomposition (simplify setup)
+  # Disable unused components
   psql:
-    knownDecompositions:
-      - main
+    password:
+      secret: gitlab-postgres
+      key: password
+  redis:
+    password:
+      enabled: false
 
-# Disable unnecessary components
+# Disable tests (fixes "fullname template" error)
+webservice:
+  tests:
+    enabled: false
+
+# Disable GitLab Runner (enable if needed)
 gitlab-runner:
   enabled: false
 
-nginx-ingress:
-  enabled: true   # Enable if no existing ingress controller
-
-certmanager:
-  install: false  # Disable if no cert-manager
-
+# PostgreSQL (embedded)
 postgresql:
-  install: true   # Use embedded PostgreSQL (or set `false` for external DB)
+  image:
+    tag: "13.6"
+  persistence:
+    enabled: true
+    size: 10Gi
 
+# Redis (embedded)
 redis:
-  install: true   # Use embedded Redis
+  enabled: true
+  persistence:
+    enabled: true
+
+# NGINX Ingress (enable if no existing ingress controller)
+nginx-ingress:
+  enabled: true
+  controller:
+    service:
+      type: LoadBalancer
+
+# Cert-Manager (disable if not needed)
+certmanager:
+  install: false
+
+# Prometheus monitoring (disable to reduce resources)
+prometheus:
+  install: false
+
+# Resource limits (adjust based on your cluster)
+resources:
+  webservice:
+    requests:
+      cpu: "500m"
+      memory: "1.5Gi"
+  sidekiq:
+    requests:
+      cpu: "300m"
+      memory: "1Gi"
+  postgresql:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
