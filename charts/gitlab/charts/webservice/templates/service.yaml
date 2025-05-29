@@ -27,7 +27,7 @@ metadata:
     {{-   toYaml .service.annotations | nindent 4 }}
     {{- end }}
 spec:
-  type: {{ .service.type }}
+  type: {{ .service.type | default "ClusterIP" }}
   {{- if (and (eq .service.type "LoadBalancer") (not (empty .service.loadBalancerIP))) }}
   loadBalancerIP: {{ .service.loadBalancerIP }}
   {{- end }}
@@ -39,36 +39,35 @@ spec:
   {{- end }}
   ports:
     {{- if $.Values.http.enabled }}
-    - port: {{ $.Values.service.externalPort }}
+    - port: {{ $.Values.service.externalPort | default 8080 }}
       targetPort: http-webservice
       protocol: TCP
       name: http-webservice
     {{- end }}
-    - port: {{ $.Values.service.workhorseExternalPort }}
+    - port: {{ $.Values.service.workhorseExternalPort | default 8181 }}
       targetPort: http-workhorse
       protocol: TCP
-      name: {{ $.Values.global.workhorse.tls.enabled | ternary "https" "http" }}-workhorse
+      name: {{ (index $.Values.global "workhorse").tls.enabled | default false | ternary "https" "http" }}-workhorse
     {{- if $.Values.tls.enabled }}
-    - port: {{ $.Values.service.tls.externalPort }}
+    - port: {{ $.Values.service.tls.externalPort | default 8443 }}
       targetPort: https-ws
       protocol: TCP
       name: https-ws
     {{- end }}
-
-  {{- if or $.Values.monitoring.exporter.enabled (and $.Values.metrics.enabled (eq $.Values.metrics.port $.Values.monitoring.exporter.port)) }}
-    - port: {{ $.Values.monitoring.exporter.port }}
+    {{- if or $.Values.monitoring.exporter.enabled (and $.Values.metrics.enabled (eq $.Values.metrics.port $.Values.monitoring.exporter.port)) }}
+    - port: {{ $.Values.monitoring.exporter.port | default 8082 }}
       targetPort: http-metrics-ws
       protocol: TCP
-      {{- $metricsTlsEnabled :=  eq (include "webservice-metrics.tls.enabled" $) "true" }}
+      {{- $metricsTlsEnabled :=  eq (include "webservice-metrics.tls.enabled" $) "true" | default false }}
       name: {{ $metricsTlsEnabled | ternary "https" "http" }}-metrics-ws
-  {{- end }}
-  {{- if or $.Values.workhorse.monitoring.exporter.enabled $.Values.workhorse.metrics.enabled }}
-    - port: {{ $.Values.workhorse.monitoring.exporter.port }}
+    {{- end }}
+    {{- if or $.Values.workhorse.monitoring.exporter.enabled $.Values.workhorse.metrics.enabled }}
+    - port: {{ $.Values.workhorse.monitoring.exporter.port | default 8083 }}
       targetPort: http-metrics-wh
       protocol: TCP
-      {{- $exporterTlsEnabled := eq (include "workhorse.monitoring.exporter.tls.enabled" $) "true" }}
+      {{- $exporterTlsEnabled := eq (include "workhorse.monitoring.exporter.tls.enabled" $) "true" | default false }}
       name: {{ $exporterTlsEnabled | ternary "https" "http" }}-metrics-wh
-  {{- end }}
+    {{- end }}
   selector:
     app: {{ template "name" $ }}
     release: {{ $.Release.Name }}
