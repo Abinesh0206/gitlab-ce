@@ -14,6 +14,8 @@ global:
     create: true
     name: gitlab-serviceaccount
     automountServiceAccountToken: false
+    labels: {}
+    annotations: {}
 
   communityImages:
     migrations:
@@ -41,6 +43,8 @@ webservice:
   serviceAccount:
     enabled: true
     create: true
+    labels: {}
+    annotations: {}
 
 gitlab-runner:
   enabled: false
