@@ -1,50 +1,5 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{/*
-Expand the name of the chart.
-*/}}
-{{- define "gitlab.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/*
-Create a default fully qualified app name.
-*/}}
-{{- define "gitlab.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name (include "gitlab.name" .) | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Standard Kubernetes labels.
-*/}}
-{{- define "gitlab.standardLabels" -}}
-app.kubernetes.io/name: {{ include "gitlab.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end -}}
-
-{{/*
-Common labels used across resources.
-*/}}
-{{- define "gitlab.commonLabels" -}}
-chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-heritage: {{ .Release.Service }}
-release: {{ .Release.Name }}
-{{- end -}}
-
-{{/*
-Selector labels.
-*/}}
-{{- define "gitlab.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "gitlab.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end -}}
-
 {{- define "gitlab.extraContainers" -}}
 {{ tpl (default "" .Values.extraContainers) . }}
 {{- end -}}
@@ -70,22 +25,22 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 - name: {{ $key }}
   valueFrom:
 {{ toYaml $value | nindent 4 }}
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
 
 {{- define "gitlab.extraEnv" -}}
 {{- $allExtraEnv := merge (default (dict) .Values.extraEnv) .Values.global.extraEnv -}}
 {{- range $key, $value := $allExtraEnv }}
 - name: {{ $key }}
   value: {{ $value | quote }}
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
 
 {{- define "gitlab.gitaly.includeInternalResources" -}}
 {{- if and .Values.global.gitaly.enabled (or (not .Values.global.praefect.enabled) (and .Values.global.praefect.enabled (not .Values.global.praefect.replaceInternalGitaly))) -}}
-true
-{{- end }}
-{{- end }}
+{{-   true }}
+{{- end -}}
+{{- end -}}
 
 {{- define "gitlab.affinity" -}}
 {{- $affinityOptions := list "hard" "soft" }}
@@ -104,7 +59,7 @@ affinity:
             matchLabels:
               {{- if ne .Chart.Name "toolbox" }}
                 {{- include "gitlab.selectorLabels" . | nindent 18 }}
-              {{- end }}
+              {{- end -}}
               {{- include "gitlab.affinity.selectorLabelsBySubchart" . | nindent 18 }}
   {{- else if eq (default .Values.global.antiAffinity .Values.antiAffinity) "soft" }}
     podAntiAffinity:
@@ -116,9 +71,9 @@ affinity:
               matchLabels:
                 {{- if ne .Chart.Name "toolbox" }}
                   {{- include "gitlab.selectorLabels" . | nindent 18 }}
-                {{- end }}
+                {{- end -}}
                 {{- include "gitlab.affinity.selectorLabelsBySubchart" . | nindent 18 }}
-  {{- end }}
+  {{- end -}}
   {{- if eq (default .Values.global.nodeAffinity .Values.nodeAffinity) "hard" }}
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -127,7 +82,6 @@ affinity:
               - key: {{ default .Values.global.affinity.nodeAffinity.key .Values.affinity.nodeAffinity.key | quote }}
                 operator: In
                 values: {{ default .Values.global.affinity.nodeAffinity.values .Values.affinity.nodeAffinity.values | toYaml | nindent 16 }}
-
   {{- else if eq (default .Values.global.nodeAffinity .Values.nodeAffinity) "soft" }}
     nodeAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
@@ -137,8 +91,8 @@ affinity:
               - key: {{ default .Values.global.affinity.nodeAffinity.key .Values.affinity.nodeAffinity.key | quote }}
                 operator: In
                 values: {{ default .Values.global.affinity.nodeAffinity.values .Values.affinity.nodeAffinity.values | toYaml | nindent 16 }}
-  {{- end }}
-{{- end }}
+  {{- end -}}
+{{- end -}}
 {{- end }}
 
 {{- define "gitlab.affinity.selectorLabelsBySubchart" -}}
@@ -146,7 +100,7 @@ affinity:
 {{- if .storage }}
 storage: {{ .storage.name }}
 {{- end }}
-{{- end }}
+{{- end -}}
 {{- if eq .Chart.Name "toolbox" }}
 {{- toYaml .Values.antiAffinityLabels.matchLabels }}
 release: {{ .Release.Name }}
@@ -158,4 +112,40 @@ release: {{ .Release.Name }}
 - name: TZ
   value: {{ . | quote }}
 {{- end }}
+{{- end }}
+
+{{/*
+Returns the public GitLab URL.
+*/}}
+{{- define "gitlab.gitlab.url" -}}
+{{- if .Values.global.gitlab.url }}
+{{- .Values.global.gitlab.url -}}
+{{- else -}}
+http://{{ include "gitlab.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+{{- end -}}
+{{- end }}
+
+{{/*
+Returns the full name of the release/chart.
+*/}}
+{{- define "gitlab.fullname" -}}
+{{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
+{{/*
+Standard selector labels.
+*/}}
+{{- define "gitlab.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "gitlab.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Standard chart labels.
+*/}}
+{{- define "gitlab.standardLabels" -}}
+app.kubernetes.io/name: {{ include "gitlab.fullname" . }}
+helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
