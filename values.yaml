@@ -956,7 +956,7 @@ upgradeCheck:
 ## Installation of certmananger.
 ## This value replaces `certmanager.install` to allow certmanager schema validation to pass.
 ## See requirements.yaml for current version
-installCertmanager: false
+installCertmanager: true
 
 ## Configuration of jetstack/cert-manager
 certmanager:
