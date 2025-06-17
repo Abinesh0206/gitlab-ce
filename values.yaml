@@ -946,8 +946,8 @@ upgradeCheck:
   priorityClassName: ""
 
 ## Settings for the Let's Encrypt ACME Issuer
- certmanager-issuer:
-   enabled: false
+ #certmanager-issuer:
+   #enabled: false
 #   # The email address to register certificates requested from Let's Encrypt.
 #   # Required if using Let's Encrypt.
 #   email: email@example.com
