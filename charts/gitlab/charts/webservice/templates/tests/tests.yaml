@@ -1,9 +1,9 @@
-{{- if and .Values.enabled .Values.helmTests.enabled -}}
+{{- if and .Values.enabled .Values.helmTests.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "gitlab.fullname" . }}-tests
-  namespace: {{ $.Release.Namespace }}
+  name: {{ include "gitlab.fullname" . }}-tests
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
@@ -11,7 +11,7 @@ data:
   test_login: |
     set -e
     echo 'Start Test'
-    endpoint="{{ template "gitlab.gitlab.url" . }}"
+    endpoint="{{ include "gitlab.gitlab.url" . }}"
     cookie_read="-c /tmp/test_login.cookie"
     cookie_readwrite="$cookie_read -b /tmp/test_login.cookie"
 
@@ -32,6 +32,4 @@ data:
 
     echo 'Test Passed'
     exit 0
-
-# Leave this here - This line denotes end of block to the parser.
 {{- end }}
