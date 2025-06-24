@@ -63,8 +63,7 @@ global:
     domain: gitlab.cloudmasa.com
     hostSuffix:
     https: true
-    externalIP: a477c858d9d4d424ab9cce6939c7b5ed-1047375012.us-east-1.elb.amazonaws.com
-    ssh:
+    externalIP: 
     gitlab: {}
     minio: {}
     registry: {}
