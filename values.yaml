@@ -59,7 +59,7 @@ global:
     links: []
     allowClusterRoles: true
   ## https://docs.gitlab.com/charts/charts/globals#configure--settings
-  s:
+  hosts:
     domain: gitlab.example.com
     hostSuffix:
     https: true
