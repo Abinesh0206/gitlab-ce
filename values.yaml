@@ -58,9 +58,9 @@ global:
     create: false
     links: []
     allowClusterRoles: true
-  ## https://docs.gitlab.com/charts/charts/globals#configure-host-settings
-  hosts:
-    domain: gitlab.example.com
+  ## https://docs.gitlab.com/charts/charts/globals#configure--settings
+  s:
+    domain: gitlab.cloudmasa.com
     hostSuffix:
     https: true
     externalIP:
