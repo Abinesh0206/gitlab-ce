@@ -96,11 +96,11 @@ service:
   type: LoadBalancer
   externalPort: 8080
   internalPort: 8080
-  workhorseExternalPort: 8181
-  workhorseInternalPort: 8181
+  workhorseExternalPort: 8080
+  workhorseInternalPort: 8080
   tls:
-    externalPort: 8081
-    internalPort: 8081
+    externalPort: 8080
+    internalPort: 8080
   # loadBalancerIP:
   loadBalancerSourceRanges:
     - 0.0.0.0/0
