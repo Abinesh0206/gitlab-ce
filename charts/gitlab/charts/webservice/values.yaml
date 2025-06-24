@@ -93,19 +93,18 @@ tls:
   enabled: false
 
 service:
-  enabled: true
   type: LoadBalancer
   externalPort: 8080
   internalPort: 8080
   workhorseExternalPort: 8181
   workhorseInternalPort: 8181
   tls:
-    externalPort: 8181
-    internalPort: 8181
-  # Optional: Set specific IP if needed
-  # loadBalancerIP: <your-static-ip>
+    externalPort: 8081
+    internalPort: 8081
+  # loadBalancerIP:
   loadBalancerSourceRanges:
     - 0.0.0.0/0
+enabled: true
 
 ingress:
   apiVersion:
