@@ -60,7 +60,7 @@ global:
     allowClusterRoles: true
   ## https://docs.gitlab.com/charts/charts/globals#configure--settings
   hosts:
-    domain: k8s-gitlab-gitlabce-dbcd82f199-3170ab8dd0e7d4d1.elb.us-east-1.amazonaws.com
+    domain: gitlab.example.com
     hostSuffix:
     https: true
     externalIP: 
