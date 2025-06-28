@@ -79,7 +79,8 @@ global:
     useNewIngressForCerts: false
     provider: nginx
     # class:
-    annotations: {}
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
     enabled: true
     tls: {}
     #   enabled: true
