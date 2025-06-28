@@ -93,7 +93,7 @@ tls:
   enabled: false
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   externalPort: 8080
   internalPort: 8080
   workhorseExternalPort: 8181
@@ -102,8 +102,8 @@ service:
     externalPort: 8081
     internalPort: 8081
   # loadBalancerIP:
-  loadBalancerSourceRanges:
-    - 0.0.0.0/0
+  #loadBalancerSourceRanges:
+    #- 0.0.0.0/0
 enabled: true
 
 ingress:
