@@ -979,6 +979,8 @@ nginx-ingress: &nginx-ingress
     config: &nginx-ingress-controller-config
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      type: LoadBalancer
+      externalTrafficPolicy: Cluster
       annotation-value-word-blocklist: "load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""
       hsts: "true"
       hsts-include-subdomains: "false"
