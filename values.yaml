@@ -977,8 +977,6 @@ nginx-ingress: &nginx-ingress
     addHeaders:
       Referrer-Policy: strict-origin-when-cross-origin
     config: &nginx-ingress-controller-config
-      annotations:
-        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
       type: LoadBalancer
       externalTrafficPolicy: Cluster
       annotation-value-word-blocklist: "load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""
@@ -997,6 +995,10 @@ nginx-ingress: &nginx-ingress
       upstream-keepalive-requests:   1000 # 1000 requests per connection, before recycling
 
     service:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-type: "external"
+        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+        service.beta.kubernetes.io/aws-load-balancer-name: gitlab-ce-elb
       externalTrafficPolicy: "Cluster"
     ingressClassByName: false
     ingressClassResource:
