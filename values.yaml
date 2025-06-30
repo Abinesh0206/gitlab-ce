@@ -993,7 +993,7 @@ nginx-ingress: &nginx-ingress
       upstream-keepalive-requests:   1000 # 1000 requests per connection, before recycling
 
     service:
-      externalTrafficPolicy: "Local"
+      externalTrafficPolicy: "Cluster"
     ingressClassByName: false
     ingressClassResource:
       name: '{{ include "ingress.class.name" $ | quote }}'
