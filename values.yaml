@@ -996,7 +996,7 @@ nginx-ingress: &nginx-ingress
 
     service:
       annotations:
-        service.beta.kubernetes.io/aws-load-balancer-type: "alb"
+        service.beta.kubernetes.io/aws-load-balancer-type: "external"
         service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
         service.beta.kubernetes.io/aws-load-balancer-name: gitlab-ce-elb
       externalTrafficPolicy: "Cluster"
