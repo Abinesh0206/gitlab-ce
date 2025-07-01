@@ -62,7 +62,7 @@ global:
   hosts:
     domain: cloudmasa.com
     hostSuffix:
-    https: true
+    https: false
     externalIP: 
     gitlab: {}
     minio: {}
