@@ -134,8 +134,8 @@ global:
     tcpUserTimeout:
     password: {}
       # useSecret:
-      # secret:
-      # key:
+       secret: gitlab-db-secret
+       key: password
       # file:
     # host: postgresql.hostedsomewhere.else
     # port: 123
@@ -145,13 +145,13 @@ global:
     # preparedStatements: false
     # databaseTasks: true
     main: {}
-      # host: postgresql.hostedsomewhere.else
-      # port: 123
-      # username: gitlab
-      # database: gitlabhq_production
+       host: dev-db.ckzaa86okpi6.us-east-1.rds.amazonaws.com
+       port: 5432
+       username: dbadmin
+       database: mydatabase
       # applicationName:
-      # preparedStatements: false
-      # databaseTasks: true
+       preparedStatements: false
+       databaseTasks: true
     ci: {}
       # host: postgresql.hostedsomewhere.else
       # port: 123
