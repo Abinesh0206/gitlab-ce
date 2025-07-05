@@ -1263,8 +1263,8 @@ postgresql:
     #secretKeys:
       #adminPasswordKey: postgresql-postgres-password
       #userPasswordKey: '{{ include "gitlab.psql.password.key" $ }}'
-  #image:
-    #tag: 16.6.0
+  image:
+    tag: 16.6.0
   #primary:
     #initdb:
       #scriptsConfigMap: '{{ include "gitlab.psql.initdbscripts" $}}'
