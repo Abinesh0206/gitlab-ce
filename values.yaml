@@ -134,7 +134,7 @@ global:
     tcpUserTimeout:
     password: 
        useSecret:
-       secret: gitlab-db-secret
+       secret: gitlab-db-secret-1
        key: password
       # file:
     # host: postgresql.hostedsomewhere.else
