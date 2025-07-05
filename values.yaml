@@ -1250,8 +1250,8 @@ redis:
 
 ## Installation & configuration of stable/postgresql
 ## See requirements.yaml for current version
-#postgresql:
-  #install: false
+postgresql:
+  install: false
   #auth:
     ## These need to be set, for the sake of bitnami/postgresql upgrade patterns.
     ## They are overridden by use of `existingSecret`
