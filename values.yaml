@@ -133,7 +133,7 @@ global:
     keepalivesCount:
     tcpUserTimeout:
     password: {}
-      # useSecret:
+       useSecret:
        secret: gitlab-db-secret
        key: password
       # file:
