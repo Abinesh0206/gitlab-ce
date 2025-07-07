@@ -743,13 +743,13 @@ global:
   ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
   ## Outgoing email server settings
   smtp:
-    enabled: false
-    address: smtp.mailgun.org
-    port: 2525
-    user_name: ""
+    enabled: true
+    address: smtp.gmail.com
+    port: 587
+    user_name: "abinesh0256@gmail.com"
     ## https://docs.gitlab.com/charts/installation/secrets#smtp-password
     password:
-      secret: ""
+      secret: gmail-smtp-secret
       key: password
     # domain:
     authentication: "plain"
@@ -762,9 +762,9 @@ global:
   ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
   ## Email persona used in email sent by GitLab
   email:
-    from: ""
+    from: "abinesh0256@gmail.com"
     display_name: GitLab
-    reply_to: ""
+    reply_to: "abinesh0256@gmail.com"
     subject_suffix: ""
     smime:
       enabled: false
