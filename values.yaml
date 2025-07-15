@@ -1239,7 +1239,7 @@ prometheus:
 redis:
   install: true
   auth:
-    existingSecret: gitlab-redis-secret
+    existingSecret: gitlab-ce-redis-secret
     existingSecretKey: redis-password
     usePasswordFiles: true
   architecture: standalone
