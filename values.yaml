@@ -152,10 +152,6 @@ global:
       # applicationName:
        preparedStatements: false
        databaseTasks: true
-       password: 
-         useSecret:
-           secret: gitlab-db-secret-1
-           key: password
     ci: {}
       # host: postgresql.hostedsomewhere.else
       # port: 123
