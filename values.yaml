@@ -61,7 +61,7 @@ global:
     allowClusterRoles: true
   ## https://docs.gitlab.com/charts/charts/globals#configure--settings
   hosts:
-    domain: gitlab.int.cloudmasa.com
+    domain: int.cloudmasa.com
     hostSuffix:
     https: true
     externalIP: 
