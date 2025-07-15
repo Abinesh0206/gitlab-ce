@@ -1347,6 +1347,7 @@ gitlab-runner:
     secret: "nonempty"
     config: |
       [[runners]]
+        tls-skip-verify = true
         [runners.kubernetes]
         image = "gitlab/gitlab-runner:latest"
         {{- if .Values.global.minio.enabled }}
