@@ -1347,6 +1347,7 @@ gitlab-runner:
     secret: "nonempty"
     config: |
       [[runners]]
+        url = "https://gitlab.int.cloudmasa.com"
         tls-skip-verify = true
         [runners.kubernetes]
         image = "gitlab/gitlab-runner:latest"
