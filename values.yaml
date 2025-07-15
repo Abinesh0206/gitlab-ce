@@ -170,8 +170,8 @@ global:
     # connectTimeout: 1
     # readTimeout: 1
     # writeTimeout: 1
-     host: gitlab-ce-redis-master
-     port: 6379
+     #host: gitlab-ce-redis-master
+     #port: 6379
     # database: 0
     # user: webservice
     # sentinels:
