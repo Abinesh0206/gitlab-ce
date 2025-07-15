@@ -132,10 +132,10 @@ global:
     keepalivesInterval:
     keepalivesCount:
     tcpUserTimeout:
-    password: 
-       useSecret:
-       secret: gitlab-db-secret-1
-       key: password
+    #password: 
+       #useSecret:
+       #secret: gitlab-db-secret-1
+       #key: password
       # file:
     # host: postgresql.hostedsomewhere.else
     # port: 123
@@ -152,6 +152,10 @@ global:
       # applicationName:
        preparedStatements: false
        databaseTasks: true
+       password: 
+         useSecret:
+           secret: gitlab-db-secret-1
+           key: password
     ci: {}
       # host: postgresql.hostedsomewhere.else
       # port: 123
