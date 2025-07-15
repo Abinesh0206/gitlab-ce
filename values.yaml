@@ -145,7 +145,7 @@ global:
     # preparedStatements: false
     # databaseTasks: true
     main: 
-       host: dev-db.ckzaa86okpi6.us-east-1.rds.amazonaws.com
+       host: dev-db.cijyw2mc0bmg.us-east-1.rds.amazonaws.com
        port: 5432
        username: dbadmin
        database: mydatabase
