@@ -165,8 +165,8 @@ global:
   redis:
     auth:
       enabled: true
-      # secret:
-      # key:
+       secret:
+       key:
     # connectTimeout: 1
     # readTimeout: 1
     # writeTimeout: 1
