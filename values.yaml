@@ -1350,7 +1350,7 @@ gitlab-runner:
         url = "https://gitlab.int.cloudmasa.com"
         tls-skip-verify = true
         [runners.kubernetes]
-        image = "gitlab/gitlab-runner:latest"
+        image = "ubuntu:20.04"
         {{- if .Values.global.minio.enabled }}
         [runners.cache]
           Type = "s3"
