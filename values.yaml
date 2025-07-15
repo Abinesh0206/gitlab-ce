@@ -165,8 +165,8 @@ global:
   redis:
     auth:
       enabled: true
-      # secret:
-      # key:
+       secret: gitlab-ce-redis-secret
+       key: secret
     # connectTimeout: 1
     # readTimeout: 1
     # writeTimeout: 1
